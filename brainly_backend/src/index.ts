@@ -13,6 +13,7 @@ const app = express();
 
 app.use(express.json());
 app.use(cors({ origin: process.env.FRONTEND_BASE_URL, credentials: true }));
+app.options('*', cors());
 
 app.get("/", (req, res) => {
     res.send("Welcome to brainly backend, Please use correct endpoint to access the frontend!");
