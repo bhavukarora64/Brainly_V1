@@ -12,8 +12,11 @@ dotenv.config();
 const app = express();
 
 app.use(express.json());
-app.use(cors({ origin: process.env.FRONTEND_BASE_URL, credentials: true }));
-app.options('*', cors());
+app.use(cors({
+    origin: 'https://brainly-v1-frontend.vercel.app',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+  }));
 
 app.get("/", (req, res) => {
     res.send("Welcome to brainly backend, Please use correct endpoint to access the frontend!");
