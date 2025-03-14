@@ -8,7 +8,6 @@ import cors from 'cors';
 import bcrypt from 'bcryptjs';
 import * as dotenv from 'dotenv';
 dotenv.config();
-
 const app = express();
 
 app.use(express.json());
@@ -16,7 +15,7 @@ app.use(cors({ origin: process.env.FRONTEND_BASE_URL, credentials: true }));
 app.options('*', cors());
 
 app.get("/", (req, res) => {
-    res.send(process.env.FRONTEND_BASE_URL);
+    res.send("Welcome to the Brainly's Server. Please access the endpoint for your tasks.");
 })
 
 app.post("/api/v1/signup", async (req,res) => {
