@@ -9,8 +9,6 @@ import bcrypt from 'bcryptjs';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
-console.log(process.env.FRONTEND_BASE_URL);
-
 const app = express();
 
 app.use(express.json());
@@ -24,6 +22,7 @@ app.use(cors({
 
 app.get("/", (req, res) => {
     res.send("Welcome to brainly backend, Please use correct endpoint to access the frontend!");
+    alert(process.env.FRONTEND_BASE_URL)
 })
 
 app.post("/api/v1/signup", async (req,res) => {
