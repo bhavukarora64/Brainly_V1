@@ -304,7 +304,7 @@ app.put("/api/v1/brain/share", userAuth ,async (req,res) => {
                         "success" : 1,
                         "error" : 0,
                         "message": "Sucessfully shared the brain !",
-                        "link": `https://brainly-three-jade.vercel.app/shared-dashboard/${sharableHash}`
+                        "link": `${process.env.FRONTEND_BASE_URL}/shared-dashboard/${sharableHash}`
                     })
                 }
                 else{
