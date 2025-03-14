@@ -21,7 +21,7 @@ app.use(cors({
   app.options('*', cors());
 
 app.get("/", (req, res) => {
-    res.send("Welcome to brainly backend, Please use correct endpoint to access the frontend!");
+    res.send(process.env.FRONTEND_BASE_URL);
     alert(process.env.FRONTEND_BASE_URL)
 })
 
