@@ -9,6 +9,8 @@ import bcrypt from 'bcryptjs';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
+console.log(process.env.FRONTEND_BASE_URL);
+
 const app = express();
 
 app.use(express.json());
