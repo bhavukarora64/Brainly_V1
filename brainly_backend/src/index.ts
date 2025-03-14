@@ -18,6 +18,8 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization']
   }));
 
+  app.options('*', cors());
+
 app.get("/", (req, res) => {
     res.send("Welcome to brainly backend, Please use correct endpoint to access the frontend!");
 })
