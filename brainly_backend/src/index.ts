@@ -12,17 +12,12 @@ dotenv.config();
 const app = express();
 
 app.use(express.json());
-app.use(cors({
-    origin: process.env.FRONTEND_BASE_URL,
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-  }));
-
-  app.options('*', cors());
+app.use(cors());
+app.use(cors({ origin: process.env.FRONTEND_BASE_URL, credentials: true }));
+app.options('*', cors()); // Handle Preflight Requests
 
 app.get("/", (req, res) => {
     res.send(process.env.FRONTEND_BASE_URL);
-    alert(process.env.FRONTEND_BASE_URL)
 })
 
 app.post("/api/v1/signup", async (req,res) => {
