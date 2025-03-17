@@ -1,12 +1,15 @@
 import Close from "../assets/icons/Close";
+import { cardDataAtom } from "../assets/store/atoms/cardData";
 import Button from "./Button";
 import Input from "./Input";
 import { Dispatch, SetStateAction, useState } from 'react';
+import { useRecoilState } from 'recoil';
 const backendBaseURL = import.meta.env.VITE_BACKEND_BASE_URL;
 
 interface ModalProps {
     visible: boolean;
     setVisible: Dispatch<SetStateAction<boolean>>;
+    fetchData: () => string
 }
 
 const types:string[] = ["Twitter", "Youtube", "Link","Document"]
@@ -17,7 +20,8 @@ export default function CreateContentModal(props: ModalProps) {
     const [title, setTitle] = useState<string>('');
     const [link, setLink ] = useState<string>('');
     const [tags, setTags] = useState<string>('');
-    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [userData, setUserData] = useRecoilState(cardDataAtom)
 
     return (
         <>
@@ -41,7 +45,7 @@ export default function CreateContentModal(props: ModalProps) {
                         </div>
                         <div className="flex justify-evenly mt-6">
 
-                        {isLoading ? <Button onClick={submitHandler} title="Submit" size="md" type="primary" /> : "Training your Brain..."}
+                        {!isLoading ? <Button onClick={submitHandler} title="Submit" size="md" type="primary" /> : "Training your Brain...might take few seconds.."}
                         </div>
                     </div>
                 </div>
@@ -67,7 +71,7 @@ export default function CreateContentModal(props: ModalProps) {
     }
 
     async function submitHandler(){
-        setIsLoading(false);
+        setIsLoading(true);
         const token  = localStorage.getItem("Authorization")
         const response = await fetch(`${backendBaseURL}/api/v1/content`, {
             method: "POST",
@@ -84,8 +88,11 @@ export default function CreateContentModal(props: ModalProps) {
         });
         const userData = await response.json(); 
         console.log(userData.message)
+        setIsLoading(false);
         alert(userData.message)
-        window.location.reload();
+        props.setVisible(false);
+        setUserData(props.fetchData());
+        // window.location.reload();
     }
 
 }

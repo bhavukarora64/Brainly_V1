@@ -16,6 +16,7 @@ import Youtube from "../assets/icons/Video";
 import Link from "../assets/icons/Link";
 import { cardDataAtom } from '../assets/store/atoms/cardData';
 import { sharedBrain } from '../assets/store/atoms/sharedBrain';
+
 const backendBaseURL = import.meta.env.VITE_BACKEND_BASE_URL;
 
 const iconTypes = {
@@ -26,11 +27,11 @@ const iconTypes = {
 };
 
 const Notification: React.FC<{ link: string; onClose: () => void }> = ({ link, onClose }) => {
-  const [progress, setProgress] = useState(100); // Start at 100%
+  const [progress, setProgress] = useState(100);
 
   useEffect(() => {
-    const duration = 10000; // 10 seconds
-    const intervalTime = 100; // Update every 100ms
+    const duration = 10000;
+    const intervalTime = 100;
     const decrement = (intervalTime / duration) * 100;
 
     const interval = setInterval(() => {
@@ -47,9 +48,7 @@ const Notification: React.FC<{ link: string; onClose: () => void }> = ({ link, o
 
   return (
     <div className="fixed bottom-4 right-4 bg-gray-100 p-4 rounded shadow-lg border border-gray-300 w-64">
-      {/* Timer Progress Bar */}
       <div className="h-1 bg-blue-500" style={{ width: `${progress}%`, transition: "width 0.1s linear" }}></div>
-
       <p className="mt-2">Sharable link copied to clipboard!</p>
       <a href={link} target="_blank" rel="noopener noreferrer">
         <button className="bg-blue-500 text-white p-2 rounded mt-2 w-full">Go to Link</button>
@@ -66,6 +65,7 @@ function Dashboard() {
   const [isBrainShared, setIsBrainShared] = useRecoilState(sharedBrain);
   const [shareLink, setShareLink] = useState<string | null>(null);
   const [isNotificationVisible, setIsNotificationVisible] = useState(false);
+  const [webSocket, setWebSocket] = useState<WebSocket | null>(null);
 
   async function fetchContent() {
     try {
@@ -108,20 +108,56 @@ function Dashboard() {
     }
   }
 
-  useEffect(() => {
-    async function fetchData() {
-      const data = await fetchContent();
-       // @ts-expect-error: Type of data might not match the expected type
-      setCardData(prevCardData => [...prevCardData, ...data]);
+  async function fetchData() {
+    const data = await fetchContent();
+    setCardData(data);
 
+    const loggedInUserData = await userCheck();
+    if (loggedInUserData) {
+      setLoginState(true);
+      setIsBrainShared(!!loggedInUserData.userData?.share);
+    }
+  }
+
+  useEffect(() => {
+    const ws = new WebSocket('ws://localhost:8080');
+
+    ws.onopen = () => {
+      console.log("WebSocket Connected");
+      setWebSocket(ws);
+
+      if (isBrainShared) {
+        userCheck().then((loggedInUserData) => {
+          if (loggedInUserData?.sharableHash) {
+            const jsonData = {
+              type: "join",
+              payload: { roomId: loggedInUserData.sharableHash }
+            };
+            ws.send(JSON.stringify(jsonData));
+          }
+        });
+      }
+    };
+
+    ws.onclose = () => {
+      console.log("WebSocket Disconnected");
+    };
+
+    return () => {
+      ws.close();
+    };
+  }, [isBrainShared]);
+
+  useEffect(() => {
+    async function checkUserAndFetchData() {
       const loggedInUserData = await userCheck();
       if (loggedInUserData) {
         setLoginState(true);
+        setIsBrainShared(!!loggedInUserData.userData?.share);
       }
-      if (loggedInUserData.userData.share) setIsBrainShared(true);
+      fetchData();
     }
-
-    fetchData();
+    checkUserAndFetchData();
   }, []);
 
   function loginOrlogout() {
@@ -140,21 +176,25 @@ function Dashboard() {
       const token = localStorage.getItem("Authorization");
       const response = await fetch(`${backendBaseURL}/api/v1/brain/share`, {
         method: "PUT",
-        headers: new Headers({
+        headers: {
           "authorization": token || '',
           "Content-Type": "application/json"
-        }),
-        body: JSON.stringify({
-          share: !isBrainShared
-        })
+        },
+        body: JSON.stringify({ share: !isBrainShared })
       });
-
       const userData = await response.json();
 
       if (!isBrainShared) {
         await navigator.clipboard.writeText(userData.link);
         setShareLink(userData.link);
         setIsNotificationVisible(true);
+
+        const jsonData = {
+          type: "join",
+          payload: { roomId: userData.sharableHash }
+        };
+
+        webSocket?.send(JSON.stringify(jsonData));
       }
 
       setIsBrainShared(prevValue => !prevValue);
@@ -165,66 +205,61 @@ function Dashboard() {
 
   return (
     <div className='grid grid-cols-12'>
-      <CreateContentModal visible={visible} setVisible={setVisible} />
+      <CreateContentModal visible={visible} setVisible={setVisible} fetchData={fetchData} />
       <Authentication visible={loginVisible} setVisible={setLoginVisible} />
       <div className='col-span-2 xl:col-span-2 border-[#e9ebed] border-r-2'>
         <SideBar />
       </div>
       <div className='col-span-10 bg-gray-50'>
         <div className='flex justify-between m-4'>
-          <div>
-            <h1 className='text-2xl font-bold'>All Notes</h1>
-          </div>
+          <h1 className='text-2xl font-bold'>All Notes</h1>
           <div className="flex gap-4">
             <Button title={isBrainShared ? "Brain Shared" : "Share Brain"} onClick={shareBrain} size="md" type={isBrainShared ? "logout" : "secondary"} frontIcon={<ShareIcon imageProp="md" />} />
             <Button title="Add Content" onClick={() => setVisible(true)} size="md" type="primary" frontIcon={<AddIcon imageProp="md" />} />
             <Button title="" onClick={loginOrlogout} size="md" type={loginState ? "logout" : "primary"} frontIcon={<LoginIcon imageProp="md" />} />
           </div>
         </div>
-        {isNotificationVisible && shareLink && (
-          <Notification link={shareLink} onClose={() => setIsNotificationVisible(false)} />
-        )}
+        {isNotificationVisible && shareLink && <Notification link={shareLink} onClose={() => setIsNotificationVisible(false)} />}
         <div className='flex m-10 gap-5 flex-wrap '>
-          {!loginState
-            ?
-            <Card
-              id=""
-              title="First Twitter Link"
-              body="https://twitter.com/SpaceX/status/1732824684683784516?ref_src=twsrc%5Etfw"
-              tags="Twitter, Social Media, News"
-              createdAt={new Date()}
-              contentType="Twitter"
-              contentTypeIcon={<Twitter imageProp="md" />}
-              firsticon={<BinIcon imageProp="lg" />}
-              secondicon={<ShareIcon imageProp="lg" />}
-            />
-            :
-            
-            cardData.length ?
-              cardData.map((card) => (
-                <Card
-                 // @ts-expect-error: card.contentId might be undefined
-                  key={card.contentId}
-                   // @ts-expect-error: card.contentId might be undefined
-                  id={card.contentId}
-                   // @ts-expect-error: card.title might be undefined
-                  title={card.title}
-                   // @ts-expect-error: card.link might be undefined
-                  body={card.link.replace("watch?v=", "embed/")}
-                   // @ts-expect-error: card.tags might be undefined
-                  tags={card.tags}
-                  createdAt={new Date()}
-                   // @ts-expect-error: card.type might be undefined
-                  contentType={card.type}
-                   // @ts-expect-error: card.type might be undefined
-                  contentTypeIcon={iconTypes[card.type]}
-                  firsticon={<BinIcon imageProp="lg" />}
-                  secondicon={<ShareIcon imageProp="lg" />}
-                />
-              )) :
-              <h1 className='text-gray-400'>hmmmm....Seems like you have nothing in your mind right now !</h1>
-          }
-        </div>
+        {!loginState
+          ?
+          <Card
+            id=""
+            title="First Twitter Link"
+            body="https://twitter.com/SpaceX/status/1732824684683784516?ref_src=twsrc%5Etfw"
+            tags="Twitter, Social Media, News"
+            createdAt={new Date()}
+            contentType="Twitter"
+            contentTypeIcon={<Twitter imageProp="md" />}
+            firsticon={<BinIcon imageProp="lg" />}
+            secondicon={<ShareIcon imageProp="lg" />}
+          />
+          :
+          cardData.length ?
+            cardData.map((card) => (
+              <Card
+                // @ts-expect-error: card.contentId might be undefined
+                key={card.contentId}
+                  // @ts-expect-error: card.contentId might be undefined
+                id={card.contentId}
+                  // @ts-expect-error: card.title might be undefined
+                title={card.title}
+                  // @ts-expect-error: card.link might be undefined
+                body={card.link.replace("watch?v=", "embed/")}
+                  // @ts-expect-error: card.tags might be undefined
+                tags={card.tags}
+                createdAt={new Date()}
+                  // @ts-expect-error: card.type might be undefined
+                contentType={card.type}
+                  // @ts-expect-error: card.type might be undefined
+                contentTypeIcon={iconTypes[card.type]}
+                firsticon={<BinIcon imageProp="lg" />}
+                secondicon={<ShareIcon imageProp="lg" />}
+              />
+            )) :
+            <h1 className='text-gray-400'>hmmmm....Seems like you have nothing in your mind right now !</h1>
+        }
+      </div>
       </div>
     </div>
   );

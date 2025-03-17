@@ -7,12 +7,57 @@ import userAuth from './middleware'
 import cors from 'cors';
 import bcrypt from 'bcryptjs';
 import * as dotenv from 'dotenv';
+import {WebSocketServer, WebSocket} from 'ws';
 dotenv.config();
 const app = express();
-
 app.use(express.json());
 app.use(cors({ origin: process.env.FRONTEND_BASE_URL, credentials: true }));
 app.options('*', cors());
+
+interface joinRoom{
+    "type": "join",
+    "payload": {
+        "roomId": "123"
+    }
+}
+
+interface messageToRoom{
+    "type": "message",
+    "payload": {
+        "message": "123"
+    }
+}
+
+const wss = new WebSocketServer({port: 8080});
+
+const registeredUsers:any[] = [];
+
+wss.on('connection', (socket) => {
+    console.log("userConnected");
+    socket.on('message', (data: string) => {
+        const message: joinRoom | messageToRoom = JSON.parse(data);
+        if (message.type === 'join') {
+            registeredUsers.push({
+                socketData: socket,
+                roomId: message.payload.roomId
+            });
+            console.log(message.payload.roomId)
+        } else if (message.type === 'message') {
+            const senderData = registeredUsers.find((element) => element.socketData === socket);
+
+            if (senderData) {
+                registeredUsers.forEach((element) => {
+                    if (element.roomId === senderData.roomId) {
+                        element.socketData.send(JSON.stringify(message));
+                    }
+                });
+            }
+        }
+    });
+
+})
+
+
 
 app.get("/", (req, res) => {
     res.send("Welcome to the Brainly's Server. Please access the endpoint for your tasks.");
@@ -302,7 +347,8 @@ app.put("/api/v1/brain/share", userAuth ,async (req,res) => {
                         "success" : 1,
                         "error" : 0,
                         "message": "Sucessfully shared the brain !",
-                        "link": `${process.env.FRONTEND_BASE_URL}/shared-dashboard/${sharableHash}`
+                        "link": `${process.env.FRONTEND_BASE_URL}/shared-dashboard/${sharableHash}`,
+                        "sharableHash": sharableHash
                     })
                 }
                 else{

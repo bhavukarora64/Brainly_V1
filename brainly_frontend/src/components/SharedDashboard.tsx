@@ -27,8 +27,8 @@ function SharedDashboard() {
   
   const {sharableLink} = useParams();
   const [userData, setUserData] = useRecoilState(cardDataAtom)
-    const [visible, setVisible] = useState(false);
-    const [loginVisible, setLoginVisible] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [loginVisible, setLoginVisible] = useState(false);
 
   async function fetchCardData(){
       const response = await fetch(`${backendBaseURL}/api/v1/brain/${sharableLink}`, {
@@ -41,6 +41,24 @@ function SharedDashboard() {
 
   useEffect(() =>{
     fetchCardData()
+
+    const ws  = new WebSocket('ws://localhost:8080');
+
+    const jsonData = {
+      "type": "join",
+      "payload": {
+          "roomId": sharableLink
+      }
+  }
+
+    ws.onopen = () => {
+      ws?.send(JSON.stringify(jsonData));
+    }
+
+    ws.onmessage = (event) => {
+      setUserData((JSON.parse(event.data)).payload.message);
+  }
+
   }, [])
 
   return (

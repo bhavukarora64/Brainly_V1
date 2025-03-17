@@ -27,7 +27,7 @@ export default function Card(props: cardProps){
                 </div>
                 <div className="flex gap-5">
                 <button onClick={() => deletePost(props.id)} className='cursor-pointer'>{props.firsticon}</button>
-                    {props.secondicon}
+                <button onClick={() => sharePost(props.id)} className='cursor-pointer'>{props.secondicon}</button>
                 </div>
             </div>
             <div className="mt-4">         
@@ -94,6 +94,12 @@ export default function Card(props: cardProps){
             console.error("Network error:", error);
             alert("Failed to delete post. Please try again.");
         }
+    }
+
+    async function sharePost(propId: string){
+        const link = cardData.filter((element) => element.contentId == propId)
+        await navigator.clipboard.writeText(link[0].link);
+        alert(`Copied the link to the clipboard: ${link[0].link}` )
     }
     
     
