@@ -17,14 +17,14 @@ app.options('*', cors());
 interface joinRoom{
     "type": "join",
     "payload": {
-        "roomId": "123"
+        "roomId": ""
     }
 }
 
 interface messageToRoom{
     "type": "message",
     "payload": {
-        "message": "123"
+        "message": ""
     }
 }
 
@@ -43,12 +43,16 @@ wss.on('connection', (socket) => {
             });
             console.log(message.payload.roomId)
         } else if (message.type === 'message') {
+
+            const cardContent = message.payload.message
             const senderData = registeredUsers.find((element) => element.socketData === socket);
+            // console.log(senderData)
 
             if (senderData) {
                 registeredUsers.forEach((element) => {
                     if (element.roomId === senderData.roomId) {
-                        element.socketData.send(JSON.stringify(message));
+                        console.log("found user");
+                        element.socketData.send(JSON.stringify(cardContent));
                     }
                 });
             }

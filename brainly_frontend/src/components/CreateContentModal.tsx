@@ -9,7 +9,7 @@ const backendBaseURL = import.meta.env.VITE_BACKEND_BASE_URL;
 interface ModalProps {
     visible: boolean;
     setVisible: Dispatch<SetStateAction<boolean>>;
-    fetchData: () => string
+    fetchData?: () => {}
 }
 
 const types:string[] = ["Twitter", "Youtube", "Link","Document"]
@@ -91,7 +91,7 @@ export default function CreateContentModal(props: ModalProps) {
         setIsLoading(false);
         alert(userData.message)
         props.setVisible(false);
-        setUserData(props.fetchData());
+        props.fetchData();
     }
 
 }

@@ -56,14 +56,15 @@ function SharedDashboard() {
     }
 
     ws.onmessage = (event) => {
-      setUserData((JSON.parse(event.data)).payload.message);
+      console.log('EventData' + event.data)
+      setUserData((JSON.parse(event.data)));
   }
 
   }, [])
 
   return (
     <div className='grid grid-cols-12'>
-            <CreateContentModal visible={visible} setVisible={setVisible} />
+            <CreateContentModal visible={visible} setVisible={setVisible}/>
             <Authentication visible={loginVisible} setVisible={setLoginVisible} />
       <div className='col-span-2 border-[#e9ebed] border-r-2'>
         <SideBar />

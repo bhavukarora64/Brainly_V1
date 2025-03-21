@@ -26,7 +26,7 @@ async function userAuth(req: Request, res: Response, next: NextFunction){
                 })
             }else{
 
-                const [rows] =  await connection.execute<ResultSetHeader>(`SELECT userId, share, username FROM Users WHERE userId = '${userId}'`);
+                const [rows] =  await connection.execute<ResultSetHeader>(`SELECT userId, share, username, sharableHash FROM Users WHERE userId = '${userId}'`);
                 if(Array.isArray(rows) && rows[0]){
                     req.body.userId = userId;
                     req.body.loggedInUser = rows[0]

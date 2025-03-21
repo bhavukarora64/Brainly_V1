@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Button from './Button';
 import ShareIcon from '../assets/icons/ShareIcon';
 import AddIcon from '../assets/icons/Addicon';
@@ -8,7 +8,7 @@ import SideBar from './SideBar';
 import LoginIcon from "../assets/icons/LoginIcon";
 import CreateContentModal from './CreateContentModal';
 import Authentication from './Authentication';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { loginAtom } from '../assets/store/atoms/loggedIn';
 import Twitter from '../assets/icons/Twitter';
 import Document from "../assets/icons/Document";
@@ -66,6 +66,7 @@ function Dashboard() {
   const [shareLink, setShareLink] = useState<string | null>(null);
   const [isNotificationVisible, setIsNotificationVisible] = useState(false);
   const [webSocket, setWebSocket] = useState<WebSocket | null>(null);
+  const userId = useRef('');
 
   async function fetchContent() {
     try {
@@ -116,37 +117,9 @@ function Dashboard() {
     if (loggedInUserData) {
       setLoginState(true);
       setIsBrainShared(!!loggedInUserData.userData?.share);
+      userId.current = loggedInUserData.userData.sharableHash
     }
   }
-
-  useEffect(() => {
-    const ws = new WebSocket('ws://localhost:8080');
-
-    ws.onopen = () => {
-      console.log("WebSocket Connected");
-      setWebSocket(ws);
-
-      if (isBrainShared) {
-        userCheck().then((loggedInUserData) => {
-          if (loggedInUserData?.sharableHash) {
-            const jsonData = {
-              type: "join",
-              payload: { roomId: loggedInUserData.sharableHash }
-            };
-            ws.send(JSON.stringify(jsonData));
-          }
-        });
-      }
-    };
-
-    ws.onclose = () => {
-      console.log("WebSocket Disconnected");
-    };
-
-    return () => {
-      ws.close();
-    };
-  }, [isBrainShared]);
 
   useEffect(() => {
     async function checkUserAndFetchData() {
@@ -159,6 +132,52 @@ function Dashboard() {
     }
     checkUserAndFetchData();
   }, []);
+
+    async function joinWebSocket(ws){
+    await fetchData();
+
+    if (userId.current) {
+      console.log(userId.current);
+          const jsonData = {
+            type: "join",
+            payload: { roomId: userId.current}
+          };
+          ws.send(JSON.stringify(jsonData));
+        }
+  };
+
+  useEffect(() => {
+    const ws = new WebSocket('ws://localhost:8080');
+
+    ws.onopen = () => {
+      console.log("WebSocket Connected");
+      setWebSocket(ws);
+      joinWebSocket(ws)
+    }
+
+    ws.onclose = () => {
+      console.log("WebSocket Disconnected");
+    };
+
+    return () => {
+      ws.close();
+    };
+  }, []);
+
+  useEffect(() => {
+    if(webSocket){
+      console.log("sending the message")
+
+      const jsonData = {
+        type: "message",
+        payload: {
+          "message": cardData
+        }
+      };
+
+      webSocket.send(JSON.stringify(jsonData));
+    }
+  }, [cardData])
 
   function loginOrlogout() {
     if (!loginState) {
