@@ -77,7 +77,7 @@ function SharedDashboard() {
              }'s Brain</h1>
           </div>
                     <div className="flex gap-4">
-                      <Button title="" size="md" type="primary" onClick={() => setLoginVisible(true)} frontIcon={<ShowAll imageProp="lg" />} />
+                      <Button title="" toolTipTitle="Login/Register" size="md" type="primary" onClick={() => setLoginVisible(true)} frontIcon={<ShowAll imageProp="lg" />} style="hidden md:block"/>
                     </div>
         </div>
         <div className='flex m-10 gap-5 flex-wrap '>

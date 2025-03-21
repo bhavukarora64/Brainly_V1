@@ -45,7 +45,7 @@ export default function CreateContentModal(props: ModalProps) {
                         </div>
                         <div className="flex justify-evenly mt-6">
 
-                        {!isLoading ? <Button onClick={submitHandler} title="Submit" size="md" type="primary" /> : "Training your Brain...might take few seconds.."}
+                        {!isLoading ? <Button onClick={submitHandler} title="Submit" toolTipTitle="Submit" size="md" type="primary" /> : "Training your Brain...might take few seconds.."}
                         </div>
                     </div>
                 </div>
@@ -92,7 +92,6 @@ export default function CreateContentModal(props: ModalProps) {
         alert(userData.message)
         props.setVisible(false);
         setUserData(props.fetchData());
-        // window.location.reload();
     }
 
 }

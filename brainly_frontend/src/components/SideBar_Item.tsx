@@ -9,6 +9,7 @@ import { cardDataAtom, cardDataAtomPersist } from "../assets/store/atoms/cardDat
 
 interface SideBarItemProps {
     componentTypeIcon: "twitter" | "video" | "document" | "link" | "showAll";
+    toolTip?: string;
     componentType: string;
     selectedOption: string; // ✅ Receive selected option from parent
     setSelectedOption: (type: string) => void; // ✅ Receive setter function from parent
@@ -43,12 +44,15 @@ export default function SideBar_Item(props: SideBarItemProps) {
     }
 
     return (
-        <button 
+        <button
+            title={props.toolTip}
             onClick={handleFilter} 
-            className={`${props.selectedOption === props.componentType ? "bg-gray-300" : ""} transition-all flex px-3 gap-7 py-3 w-80 text-[#484b56] cursor-pointer hover:bg-gray-200 hover:text-2xl`} 
+            className={`${props.selectedOption === props.componentType ? "bg-gray-300" : ""} transition-all flex lg:px-4 px-5 gap-7 py-3 w-80 text-[#484b56] cursor-pointer hover:bg-gray-200 hover:text-2xl text-ellipsis`} 
         >
-            {componentIcons[props.componentTypeIcon] || "❓"} {/* Fallback icon */}
-            {props.componentType}
+            {componentIcons[props.componentTypeIcon] || "❓"}
+            <div className="hidden sm:block">
+                {props.componentType}
+            </div>
         </button>
     );
 }

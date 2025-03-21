@@ -4,6 +4,7 @@ import Input from "./Input";
 import { Dispatch, SetStateAction, useState } from 'react';
 import { loginAtom } from "../assets/store/atoms/loggedIn";
 import { useSetRecoilState } from "recoil";
+import { useNavigate } from "react-router-dom";
 const backendBaseURL = import.meta.env.VITE_BACKEND_BASE_URL;
 
 interface ModalProps {
@@ -17,13 +18,14 @@ export default function Authentication(props: ModalProps) {
     const [username, setUsername] = useState<string>('');
     const [password, setPassword ] = useState<string>('');
     const [selectedSection, setSelectedSection ] = useState<string>("");
-    const setLoggedIn = useSetRecoilState(loginAtom);
+    const setLoginState = useSetRecoilState(loginAtom);
     const [isLoading, setIsLoading] = useState<boolean>(true);
+    const navigate = useNavigate()
 
     return (
         <>
             {props.visible && (
-                <div className="h-screen w-screen fixed top-0 left-0 flex justify-center items-center bg-black/50">
+                <div className="h-screen w-screen fixed top-0 left-0 flex justify-center items-center bg-black/50 z-50">
                     <div className="bg-white p-6 rounded-lg shadow-lg max-w-96">
                         {selectedSection === "" && (
                                 <>
@@ -33,10 +35,10 @@ export default function Authentication(props: ModalProps) {
                                         </button>
                                     </div>
                                     <div className="flex justify-evenly m-15">
-                                        <Button onClick={() => setSelectedSection("Register")} title="Register" size="lg" type="primary" />
+                                        <Button onClick={() => setSelectedSection("Register")} title="Register" toolTipTitle="Register" size="lg" type="primary" />
                                     </div>
                                     <div className="flex justify-evenly m-15">
-                                        <Button onClick={() => setSelectedSection("Login")} title="Login" size="lg" type="primary" />
+                                        <Button onClick={() => setSelectedSection("Login")} title="Login" toolTipTitle="Login" size="lg" type="primary" />
                                     </div>
                                 </>
                             )}
@@ -51,7 +53,7 @@ export default function Authentication(props: ModalProps) {
                                 <br></br>
                                 <Input onChange={(e) => {setPassword(e.target.value)}}  value={password}type="password" placeholder="Password" />
                                 <div className="flex justify-evenly mt-6">
-                                    {isLoading ? <Button onClick={submitRegisterHandler} title="Register" size="md" type="primary" /> : "Registering your brain..."}
+                                    {isLoading ? <Button onClick={submitRegisterHandler} title="Register" toolTipTitle="Register" size="md" type="primary" /> : "Registering your brain..."}
                                 </div>
                             </>
                         )}
@@ -69,7 +71,7 @@ export default function Authentication(props: ModalProps) {
                                     <span onClick={() => toogletypes("Remeber Me")} className={(selectedtypes.includes("Remeber Me") ? "text-white bg-[#6042e0]" : "text-[#7c6fd1] bg-[#ebf4fe] ") + " rounded w-30 h-7 px-3 mr-3 mt-3 flex justify-center font-bold"}>{"Remeber Me"}</span>
                                 </div>
                                 <div className="flex justify-evenly mt-6">
-                                {isLoading ? <Button onClick={submitLoginHandler} title="Login" size="md" type="primary" /> : "Preparing your brain..."}
+                                {isLoading ? <Button onClick={submitLoginHandler} title="Login" toolTipTitle="Login" size="md" type="primary" /> : "Preparing your brain..."}
                                 </div>
                             </>
                         )}
@@ -111,13 +113,15 @@ export default function Authentication(props: ModalProps) {
 
         if(response.success === 1){
             localStorage.setItem('Authorization', response.Authorization);
-            setLoggedIn(true)
-            alert(response.message)
-            window.location.href = '/.dashboard';
-
-        }else{
-            setIsLoading(true)
-            alert(response.message)
+            setLoginState(true);
+            alert(response.message);
+            
+            setTimeout(() => {
+               navigate('/dashboard')
+            }, 100);
+        } else {
+            setIsLoading(false);
+            alert(response.message);
         }
     }
 
@@ -138,7 +142,7 @@ export default function Authentication(props: ModalProps) {
 
         if(response.success === 1){
             alert(response.message)
-            window.location.href = './dashboard';
+            window.location.href = '/dashboard';
 
         }else{
             setIsLoading(true)

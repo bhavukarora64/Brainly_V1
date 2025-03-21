@@ -207,16 +207,16 @@ function Dashboard() {
     <div className='grid grid-cols-12'>
       <CreateContentModal visible={visible} setVisible={setVisible} fetchData={fetchData} />
       <Authentication visible={loginVisible} setVisible={setLoginVisible} />
-      <div className='col-span-2 xl:col-span-2 border-[#e9ebed] border-r-2'>
+      <div className='col-span-2 border-[#e9ebed] border-r-2'>
         <SideBar />
       </div>
       <div className='col-span-10 bg-gray-50'>
         <div className='flex justify-between m-4'>
-          <h1 className='text-2xl font-bold'>All Notes</h1>
+          <h1 className='text-2xl font-bold text-ellipsis'>All Notes</h1>
           <div className="flex gap-4">
-            <Button title={isBrainShared ? "Brain Shared" : "Share Brain"} onClick={shareBrain} size="md" type={isBrainShared ? "logout" : "secondary"} frontIcon={<ShareIcon imageProp="md" />} />
-            <Button title="Add Content" onClick={() => setVisible(true)} size="md" type="primary" frontIcon={<AddIcon imageProp="md" />} />
-            <Button title="" onClick={loginOrlogout} size="md" type={loginState ? "logout" : "primary"} frontIcon={<LoginIcon imageProp="md" />} />
+            <Button title={isBrainShared ? "Brain Shared" : "Share Brain"} toolTipTitle="Share/Unshare Brain" onClick={shareBrain} size="md" type={isBrainShared ? "logout" : "secondary"} frontIcon={<ShareIcon imageProp="md"/>} style="hidden md:block" />
+            <Button title="Add Content" onClick={() => setVisible(true)} toolTipTitle="Add Content" size="md" type="primary" frontIcon={<AddIcon imageProp="md" />} style="hidden md:block"/>
+            <Button title="" toolTipTitle="Login/Logout" onClick={loginOrlogout} size="md" type={loginState ? "logout" : "primary"} frontIcon={<LoginIcon imageProp="md" />}  style="hidden md:block"/>
           </div>
         </div>
         {isNotificationVisible && shareLink && <Notification link={shareLink} onClose={() => setIsNotificationVisible(false)} />}

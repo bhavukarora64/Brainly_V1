@@ -1,11 +1,12 @@
 interface imageSize{
-    imageProp:"sm" | "md" | "lg"
+    imageProp:"sm" | "md" | "lg" | "xl"
 }
 
 const imageStyle = {
     "sm": "w-3 h-4",
     "md": "w-5 h-5",
-    "lg": "w-10 h-10",
+    "lg": "w-8 h-8",
+    "xl": "w-10 h-10"
 };
 
 export default function Brain(props: imageSize) {

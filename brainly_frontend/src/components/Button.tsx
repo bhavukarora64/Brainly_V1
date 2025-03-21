@@ -2,6 +2,8 @@ import { ReactElement } from "react"
 
 interface buttonProperies{
     title: string,
+    style?: string,
+    toolTipTitle: string,
     size: "sm" | "md" | "lg",
     type: "secondary" | "primary" | "logout",
     frontIcon?: ReactElement,
@@ -23,14 +25,14 @@ const buttonType = {
 
 export default function Button(props: buttonProperies){
     return (
-        <button 
-            className={buttonStyle[props.size] + " " +  buttonType[props.type] + " " + "transition-all duration-200 transform hover:scale-110"}
-            onClick={props.onClick}
-            >
-                <div className="flex gap-1 justify-center items-center">
-                        {props.frontIcon}
-                        {props.title}
-                </div>
+        <button title={props.toolTipTitle}
+          className={`${buttonStyle[props.size]} ${buttonType[props.type]} transition-all duration-300 transform hover:scale-110`}
+          onClick={props.onClick}
+        >
+          <div className="flex gap-1 justify-center items-center ">
+            <span className="">{props.frontIcon}</span>
+            <span className={props.style}>{props.title}</span>
+          </div>
         </button>
-    ) 
+      )
 }
