@@ -178,7 +178,7 @@ function LandingPage(){
 
             <footer className="flex flex-col sm:flex-row sm:justify-center xl:justify-between items-center my-5">
                 <p className="flex text-lg font-mono gap-1 items-center">
-                  <Brain imageProp="lg" alt="Brain Icon" />
+                  <Brain imageProp="lg" />
                   Brainly
                 </p>
                 <p className="text-lg font-mono mt-2 sm:mt-0">Copyright 2025 Brainly. All rights reserved</p>

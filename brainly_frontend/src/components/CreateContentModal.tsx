@@ -1,15 +1,13 @@
 import Close from "../assets/icons/Close";
-import { cardDataAtom } from "../assets/store/atoms/cardData";
 import Button from "./Button";
 import Input from "./Input";
 import { Dispatch, SetStateAction, useState } from 'react';
-import { useRecoilState } from 'recoil';
 const backendBaseURL = import.meta.env.VITE_BACKEND_BASE_URL;
 
 interface ModalProps {
     visible: boolean;
     setVisible: Dispatch<SetStateAction<boolean>>;
-    fetchData?: () => {}
+    fetchData?: () => void
 }
 
 const types:string[] = ["Twitter", "Youtube", "Link","Document"]
@@ -21,7 +19,6 @@ export default function CreateContentModal(props: ModalProps) {
     const [link, setLink ] = useState<string>('');
     const [tags, setTags] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [userData, setUserData] = useRecoilState(cardDataAtom)
 
     return (
         <>
@@ -91,6 +88,7 @@ export default function CreateContentModal(props: ModalProps) {
         setIsLoading(false);
         alert(userData.message)
         props.setVisible(false);
+        // @ts-expect-error: Error Expected
         props.fetchData();
     }
 

@@ -97,8 +97,11 @@ export default function Card(props: cardProps){
     }
 
     async function sharePost(propId: string){
+        // @ts-expect-error: Error Expected
         const link = cardData.filter((element) => element.contentId == propId)
+        // @ts-expect-error: Error Expected
         await navigator.clipboard.writeText(link[0].link);
+        // @ts-expect-error: Error Expected
         alert(`Copied the link to the clipboard: ${link[0].link}` )
     }
     

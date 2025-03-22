@@ -8,7 +8,7 @@ import SideBar from './SideBar';
 import LoginIcon from "../assets/icons/LoginIcon";
 import CreateContentModal from './CreateContentModal';
 import Authentication from './Authentication';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState} from 'recoil';
 import { loginAtom } from '../assets/store/atoms/loggedIn';
 import Twitter from '../assets/icons/Twitter';
 import Document from "../assets/icons/Document";
@@ -132,7 +132,7 @@ function Dashboard() {
     }
     checkUserAndFetchData();
   }, []);
-
+    // @ts-expect-error: Error Expected
     async function joinWebSocket(ws){
     await fetchData();
 
