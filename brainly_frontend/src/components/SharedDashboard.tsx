@@ -14,6 +14,7 @@ import Button from './Button'
 import Authentication from './Authentication'
 import CreateContentModal from './CreateContentModal'
 import ShowAll from '../assets/icons/showAll'
+const backendWssURL = import.meta.env.VITE_BACKEND_BASE_WSS_URL;
 const backendBaseURL = import.meta.env.VITE_BACKEND_BASE_URL;
 
 const iconTypes = {
@@ -42,7 +43,7 @@ function SharedDashboard() {
   useEffect(() =>{
     fetchCardData()
 
-    const ws  = new WebSocket('ws://localhost:8080');
+    const ws = new WebSocket(`${backendWssURL}:8080`);
 
     const jsonData = {
       "type": "join",

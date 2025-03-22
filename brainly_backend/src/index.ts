@@ -7,7 +7,7 @@ import userAuth from './middleware'
 import cors from 'cors';
 import bcrypt from 'bcryptjs';
 import * as dotenv from 'dotenv';
-import {WebSocketServer, WebSocket} from 'ws';
+import {WebSocketServer} from 'ws';
 dotenv.config();
 const app = express();
 app.use(express.json());
@@ -60,8 +60,6 @@ wss.on('connection', (socket) => {
     });
 
 })
-
-
 
 app.get("/", (req, res) => {
     res.send("Welcome to the Brainly's Server. Please access the endpoint for your tasks.");

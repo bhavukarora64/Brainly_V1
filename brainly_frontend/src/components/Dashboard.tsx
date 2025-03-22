@@ -16,7 +16,7 @@ import Youtube from "../assets/icons/Video";
 import Link from "../assets/icons/Link";
 import { cardDataAtom } from '../assets/store/atoms/cardData';
 import { sharedBrain } from '../assets/store/atoms/sharedBrain';
-
+const backendWssURL = import.meta.env.VITE_BACKEND_BASE_WSS_URL;
 const backendBaseURL = import.meta.env.VITE_BACKEND_BASE_URL;
 
 const iconTypes = {
@@ -147,7 +147,7 @@ function Dashboard() {
   };
 
   useEffect(() => {
-    const ws = new WebSocket('ws://localhost:8080');
+    const ws = new WebSocket(`${backendWssURL}:8080`);
 
     ws.onopen = () => {
       console.log("WebSocket Connected");
