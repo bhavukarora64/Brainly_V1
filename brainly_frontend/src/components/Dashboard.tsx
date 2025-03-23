@@ -147,7 +147,7 @@ function Dashboard() {
   };
 
   useEffect(() => {
-    const ws = new WebSocket(`${backendWssURL}:8080`);
+    const ws = new WebSocket(`${backendWssURL}`);
 
     ws.onopen = () => {
       console.log("WebSocket Connected");
