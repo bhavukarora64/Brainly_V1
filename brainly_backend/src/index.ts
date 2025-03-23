@@ -7,58 +7,11 @@ import userAuth from './middleware'
 import cors from 'cors';
 import bcrypt from 'bcryptjs';
 import * as dotenv from 'dotenv';
-import {WebSocketServer} from 'ws';
 dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(cors({ origin: process.env.FRONTEND_BASE_URL, credentials: true }));
 app.options('*', cors());
-
-interface joinRoom{
-    "type": "join",
-    "payload": {
-        "roomId": ""
-    }
-}
-
-interface messageToRoom{
-    "type": "message",
-    "payload": {
-        "message": ""
-    }
-}
-
-const wss = new WebSocketServer({port: 8080});
-
-const registeredUsers:any[] = [];
-
-wss.on('connection', (socket) => {
-    console.log("userConnected");
-    socket.on('message', (data: string) => {
-        const message: joinRoom | messageToRoom = JSON.parse(data);
-        if (message.type === 'join') {
-            registeredUsers.push({
-                socketData: socket,
-                roomId: message.payload.roomId
-            });
-            console.log(message.payload.roomId)
-        } else if (message.type === 'message') {
-
-            const cardContent = message.payload.message
-            const senderData = registeredUsers.find((element) => element.socketData === socket);
-
-            if (senderData) {
-                registeredUsers.forEach((element) => {
-                    if (element.roomId === senderData.roomId) {
-                        console.log("found user");
-                        element.socketData.send(JSON.stringify(cardContent));
-                    }
-                });
-            }
-        }
-    });
-
-})
 
 app.get("/", (req, res) => {
     res.send("Welcome to the Brainly's Server. Please access the endpoint for your tasks.");
