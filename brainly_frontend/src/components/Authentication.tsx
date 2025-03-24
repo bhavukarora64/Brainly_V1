@@ -165,7 +165,6 @@ export default function Authentication(props: ModalProps) {
             setPassword("");
             navigate("/dashboard")
             setSelectedSection("");
-            navigate("/dashboard")
         }else{
             setIsLoading(false)
             alert(response.message)
