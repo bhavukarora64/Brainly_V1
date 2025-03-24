@@ -204,7 +204,9 @@ function Dashboard() {
       });
       const userData = await response.json();
 
-      if (!isBrainShared) {
+      setIsBrainShared(prevValue => !prevValue);
+      
+      if (isBrainShared) {
         await navigator.clipboard.writeText(userData.link);
         setShareLink(userData.link);
         setIsNotificationVisible(true);
@@ -214,10 +216,10 @@ function Dashboard() {
           payload: { roomId: userData.sharableHash }
         };
 
+        console.log("connecting")
+
         webSocket?.send(JSON.stringify(jsonData));
       }
-
-      setIsBrainShared(prevValue => !prevValue);
     } else {
       alert("You must be logged in!");
     }

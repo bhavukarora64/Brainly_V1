@@ -132,6 +132,7 @@ export default function Authentication(props: ModalProps) {
             setUsername("");
             setPassword("");
             setSelectedSection("");
+            navigate("/dashboard")
         } else {
             setIsLoading(false);
             setLoginState(false);
@@ -164,7 +165,7 @@ export default function Authentication(props: ModalProps) {
             setPassword("");
             navigate("/dashboard")
             setSelectedSection("");
-
+            navigate("/dashboard")
         }else{
             setIsLoading(false)
             alert(response.message)
