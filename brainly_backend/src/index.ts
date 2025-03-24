@@ -126,6 +126,12 @@ app.post("/api/v1/signin", async (req,res) => {
                             "message": "Internal Server Error..try after some time!"
                         })
                     }
+                }else{
+                    res.status(403).json({
+                        "success":0,
+                        "error":1,
+                        "message": "Wrong emailId or Password !"
+                    })
                 }
                 
             }else{

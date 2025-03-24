@@ -19,7 +19,7 @@ export default function Authentication(props: ModalProps) {
     const [password, setPassword ] = useState<string>('');
     const [selectedSection, setSelectedSection ] = useState<string>("");
     const setLoginState = useSetRecoilState(loginAtom);
-    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const navigate = useNavigate()
 
     return (
@@ -53,7 +53,7 @@ export default function Authentication(props: ModalProps) {
                                 <br></br>
                                 <Input onChange={(e) => {setPassword(e.target.value)}}  value={password}type="password" placeholder="Password" />
                                 <div className="flex justify-evenly mt-6">
-                                    {isLoading ? <Button onClick={submitRegisterHandler} title="Register" toolTipTitle="Register" size="md" type="primary" /> : "Registering your brain..."}
+                                    {!isLoading ? <Button onClick={submitRegisterHandler} title="Register" toolTipTitle="Register" size="md" type="primary" /> : "Registering your brain..."}
                                 </div>
                             </>
                         )}
@@ -68,10 +68,10 @@ export default function Authentication(props: ModalProps) {
                                 <br></br>
                                 <Input onChange={(e) => {setPassword(e.target.value)}}  value={password}type="password" placeholder="Password" />
                                 <div className="grid grid-cols-3 mt-2">
-                                    <span onClick={() => toogletypes("Remeber Me")} className={(selectedtypes.includes("Remeber Me") ? "text-white bg-[#6042e0]" : "text-[#7c6fd1] bg-[#ebf4fe] ") + " rounded w-30 h-7 px-3 mr-3 mt-3 flex justify-center font-bold"}>{"Remeber Me"}</span>
+                                    <span onClick={() => toogletypes("Remember Me")} className={(selectedtypes.includes("Remember Me") ? "text-white bg-[#6042e0]" : "text-[#7c6fd1] bg-[#ebf4fe] ") + " rounded w-30 h-7 px-3 mr-3 mt-3 flex justify-center font-bold"}>{"Remember Me"}</span>
                                 </div>
                                 <div className="flex justify-evenly mt-6">
-                                {isLoading ? <Button onClick={submitLoginHandler} title="Login" toolTipTitle="Login" size="md" type="primary" /> : "Preparing your brain..."}
+                                {!isLoading ? <Button onClick={submitLoginHandler} title="Login" toolTipTitle="Login" size="md" type="primary" /> : "Preparing your brain..."}
                                 </div>
                             </>
                         )}
@@ -82,8 +82,7 @@ export default function Authentication(props: ModalProps) {
     );
 
     function toggle(){
-        // @ts-expect-error: setVisible does not accept any arguments
-        props.setVisible();
+        props.setVisible(false);
         setSelectedSection("");
     }
 
@@ -96,8 +95,21 @@ export default function Authentication(props: ModalProps) {
     }
 
     async function submitLoginHandler(){
-        setIsLoading(false)
-        const result = await fetch(`${backendBaseURL}/api/v1/signin`, {
+        // eslint-disable-next-line prefer-const
+        let result: Response;
+        setIsLoading(true);
+
+        setTimeout(() => {
+            if(!result){
+                alert("Request Timed Out: Please check your username or password & re-login")
+                setIsLoading(false);
+                setUsername("");
+                setPassword("");
+                setSelectedSection("");
+            }
+        }, 10000)
+
+        result = await fetch(`${backendBaseURL}/api/v1/signin`, {
             method: "POST",
             headers: new Headers({
                 "Content-Type": "application/json",
@@ -109,24 +121,28 @@ export default function Authentication(props: ModalProps) {
             })
         });
 
+        console.log(result)
         const response  = await result.json();
-
+        console.log(response)
         if(response.success === 1){
             localStorage.setItem('Authorization', response.Authorization);
+            props.setVisible(false);
+            setIsLoading(false);
             setLoginState(true);
-            alert(response.message);
-            
-            setTimeout(() => {
-               navigate('/dashboard')
-            }, 100);
+            setUsername("");
+            setPassword("");
+            setSelectedSection("");
         } else {
             setIsLoading(false);
+            setLoginState(false);
             alert(response.message);
+            setUsername("");
+            setPassword("");
         }
     }
 
     async function submitRegisterHandler(){
-        setIsLoading(false)
+        setIsLoading(true)
         const result = await fetch(`${backendBaseURL}/api/v1/signup`, {
             method: "POST",
             headers: new Headers({
@@ -142,11 +158,19 @@ export default function Authentication(props: ModalProps) {
 
         if(response.success === 1){
             alert(response.message)
-            window.location.href = '/dashboard';
+            props.setVisible(false);
+            setIsLoading(false);
+            setUsername("");
+            setPassword("");
+            navigate("/dashboard")
+            setSelectedSection("");
 
         }else{
-            setIsLoading(true)
+            setIsLoading(false)
             alert(response.message)
+            setIsLoading(false);
+            setUsername("");
+            setPassword("");
         }
     }
 }

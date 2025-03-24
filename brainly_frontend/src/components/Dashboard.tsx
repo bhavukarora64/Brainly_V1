@@ -120,20 +120,21 @@ function Dashboard() {
       userId.current = loggedInUserData.userData.sharableHash
     }
   }
+  
+  async function checkUserAndFetchData() {
+    const loggedInUserData = await userCheck();
+    if (loggedInUserData) {
+      setLoginState(true);
+      setIsBrainShared(!!loggedInUserData.userData?.share);
+    }
+    fetchData();
+  }
 
   useEffect(() => {
-    async function checkUserAndFetchData() {
-      const loggedInUserData = await userCheck();
-      if (loggedInUserData) {
-        setLoginState(true);
-        setIsBrainShared(!!loggedInUserData.userData?.share);
-      }
-      fetchData();
-    }
     checkUserAndFetchData();
-  }, []);
+  }, [loginState]);
     // @ts-expect-error: Error Expected
-    async function joinWebSocket(ws){
+  async function joinWebSocket(ws){
     await fetchData();
 
     if (userId.current) {
