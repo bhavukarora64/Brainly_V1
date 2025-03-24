@@ -130,8 +130,8 @@ function LandingPage(){
                 </div>
             </div>
 
-            <div className="text-center px-4 py-8 md:py-12">
-              <h1 className="text-2xl md:text-3xl xl:text-4xl font-medium mb-6">Brainly Works For You</h1>
+            <div className="text-center px-4 py-8 md:py-8">
+              <h1 className="text-2xl lg-text-3xl xl:text-4xl font-bold leading-12 xl:leading-24">Key features of your dashboard</h1>
               
               {/* Desktop version */}
               <div className="hidden sm:flex justify-center">
@@ -140,7 +140,7 @@ function LandingPage(){
               
               {/* Mobile version - simplified or zoomed in on key features */}
               <div className="flex flex-col sm:hidden">
-                <p className="mb-4 text-sm text-gray-700">Key features of your dashboard:</p>
+                <p className="text-2xl lg-text-3xl xl:text-4xl font-bold leading-12 xl:leading-24">Key features of your dashboard:</p>
                 <img src={dashboardMobile} className=" w-full rounded shadow-md mb-3" alt="Key Dashboard Features" />
               </div>
             </div>
