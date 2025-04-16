@@ -16,9 +16,9 @@ import Youtube from "../assets/icons/Video";
 import Link from "../assets/icons/Link";
 import { cardDataAtom } from '../assets/store/atoms/cardData';
 import { sharedBrain } from '../assets/store/atoms/sharedBrain';
+import {useUserData} from '../hooks/useUserData';
 const backendWssURL = import.meta.env.VITE_BACKEND_BASE_WSS_URL;
 const backendBaseURL = import.meta.env.VITE_BACKEND_BASE_URL;
-
 const iconTypes = {
   "Twitter": <Twitter imageProp='md' />,
   "Youtube": <Youtube imageProp='md' />,
@@ -58,6 +58,7 @@ const Notification: React.FC<{ link: string; onClose: () => void }> = ({ link, o
 };
 
 function Dashboard() {
+  const {userCheck, fetchContent} = useUserData();
   const [visible, setVisible] = useState(false);
   const [loginVisible, setLoginVisible] = useState(false);
   const [cardData, setCardData] = useRecoilState(cardDataAtom);
@@ -67,47 +68,6 @@ function Dashboard() {
   const [isNotificationVisible, setIsNotificationVisible] = useState(false);
   const [webSocket, setWebSocket] = useState<WebSocket | null>(null);
   const userId = useRef('');
-
-  async function fetchContent() {
-    try {
-      const token = localStorage.getItem("Authorization");
-      if (!token) {
-        console.log("Please Re-login");
-        return [];
-      }
-      const response = await fetch(`${backendBaseURL}/api/v1/content`, {
-        method: "GET",
-        headers: { "Authorization": token }
-      });
-
-      const userData = await response.json();
-      return userData.content || [];
-    } catch (error) {
-      console.error("Error fetching content:", error);
-      return [];
-    }
-  }
-
-  async function userCheck() {
-    try {
-      const token = localStorage.getItem("Authorization");
-      if (!token) {
-        console.log("Please Re-login");
-        return false;
-      }
-
-      const response = await fetch(`${backendBaseURL}/api/v1/me`, {
-        method: "POST",
-        headers: { "authorization": token }
-      });
-
-      const userData = await response.json();
-      return userData;
-    } catch (error) {
-      console.error("Error checking user:", error);
-      return false;
-    }
-  }
 
   async function fetchData() {
     const data = await fetchContent();
@@ -146,9 +106,11 @@ function Dashboard() {
           ws.send(JSON.stringify(jsonData));
         }
   };
-
+  
+// WebSocket Initial Connect at Hook
   useEffect(() => {
     const ws = new WebSocket(`${backendWssURL}`);
+
 
     ws.onopen = () => {
       console.log("WebSocket Connected");
@@ -206,7 +168,7 @@ function Dashboard() {
 
       setIsBrainShared(prevValue => !prevValue);
       
-      if (isBrainShared) {
+      if (!isBrainShared) {
         await navigator.clipboard.writeText(userData.link);
         setShareLink(userData.link);
         setIsNotificationVisible(true);

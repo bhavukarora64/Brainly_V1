@@ -57,8 +57,7 @@ function SharedDashboard() {
     }
 
     ws.onmessage = (event) => {
-      console.log('EventData' + event.data)
-      setUserData((JSON.parse(event.data)));
+      setUserData((JSON.parse(event.data)).payload.message);
   }
 
   }, [])
