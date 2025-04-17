@@ -1,13 +1,15 @@
 // backend/sendEmail.js
 import nodemailer from 'nodemailer';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 const transporter = nodemailer.createTransport({
   host: 'smtp.zoho.eu',
   port: 465,
   secure: true,
   auth: {
-    user: 'bhavuk@brainlyy.bhavukarora.eu',
-    pass: 'Bhavuk@12345',
+    user: process.env.MAIL_USERNAME,
+    pass: process.env.MAIL_PASSWORD,
   },
 });
 
