@@ -229,7 +229,7 @@ function Dashboard() {
           :
           cardData.length ?
             cardData.map((card) => {
-              
+              // @ts-expect-error: Error Expected
               const clearURL = getCleanYouTubeURL(card.link);
               console.log(clearURL)
 

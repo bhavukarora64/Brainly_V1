@@ -210,8 +210,11 @@ function LandingPage(){
               onSubmit={async (e) => {
                 e.preventDefault();
                 const formData = {
+                  // @ts-expect-error: Error Expected
                   name: e.target.name.value,
+                  // @ts-expect-error: Error Expected
                   email: e.target.email.value,
+                  // @ts-expect-error: Error Expected
                   message: e.target.message.value
                 };
 
@@ -226,6 +229,7 @@ function LandingPage(){
 
                   if (response.ok) {
                     alert("Thank you for your feedback!");
+                    // @ts-expect-error: Error Expected
                     e.target.reset();
                   } else {
                     alert("Something went wrong. Please try again.");

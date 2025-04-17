@@ -14,7 +14,6 @@ interface ModalProps {
 
 export default function Authentication(props: ModalProps) {
 
-    const [selectedtypes, setSelectedtypes] = useState<string[]>([]);
     const [username, setUsername] = useState<string>('');
     const [password, setPassword ] = useState<string>('');
     const [selectedSection, setSelectedSection ] = useState<string>("");
@@ -113,8 +112,7 @@ export default function Authentication(props: ModalProps) {
             }),
             body: JSON.stringify({
                 username: userType === "guest" ? "guest" : username,
-                password: userType === "guest" ? "Guest@123" : password,
-                stayLoggedIn: selectedtypes
+                password: userType === "guest" ? "Guest@123" : password
             })
         });
 
