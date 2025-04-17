@@ -52,9 +52,15 @@ export default function Authentication(props: ModalProps) {
                                 <Input onChange={(e) => {setUsername(e.target.value)}} value={username}  type="text" placeholder="Username" />
                                 <br></br>
                                 <Input onChange={(e) => {setPassword(e.target.value)}}  value={password}type="password" placeholder="Password" />
-                                <div className="flex justify-evenly mt-6">
+                                <div className="flex justify-evenly mt-6 mb-6">
                                     {!isLoading ? <Button onClick={submitRegisterHandler} title="Register" toolTipTitle="Register" size="md" type="primary" /> : "Registering your brain..."}
                                 </div>
+                                <p className="text-xs font-extralight text-gray-500">
+                                    1. Username should be unique & min. 3 character long<br/>
+                                    2. Password should be at least 8 characters long.<br/>
+                                    3. Password Example : Abcdef@123 <br/>
+                                    4. Password should not contain spaces.<br/>
+                                </p>
                             </>
                         )}
                         {selectedSection === "Login" && (
@@ -67,11 +73,10 @@ export default function Authentication(props: ModalProps) {
                                 <Input onChange={(e) => {setUsername(e.target.value)}} value={username}  type="text" placeholder="Username" />
                                 <br></br>
                                 <Input onChange={(e) => {setPassword(e.target.value)}}  value={password}type="password" placeholder="Password" />
-                                <div className="grid grid-cols-3 mt-2">
-                                    <span onClick={() => toogletypes("Remember Me")} className={(selectedtypes.includes("Remember Me") ? "text-white bg-[#6042e0]" : "text-[#7c6fd1] bg-[#ebf4fe] ") + " rounded w-30 h-7 px-3 mr-3 mt-3 flex justify-center font-bold"}>{"Remember Me"}</span>
-                                </div>
+                                <br></br>
                                 <div className="flex justify-evenly mt-6">
-                                {!isLoading ? <Button onClick={submitLoginHandler} title="Login" toolTipTitle="Login" size="md" type="primary" /> : "Preparing your brain..."}
+                                    {!isLoading ? <Button onClick={() => {submitLoginHandler("registered")}} title="Login" toolTipTitle="Login" size="md" type="primary" /> : "Preparing your brain..."}
+                                    {!isLoading ? <Button onClick={() => {submitLoginHandler("guest")}} title="Guest Login" toolTipTitle="Guest Login" size="md" type="primary" /> : "Preparing your brain..."}
                                 </div>
                             </>
                         )}
@@ -86,15 +91,7 @@ export default function Authentication(props: ModalProps) {
         setSelectedSection("");
     }
 
-    function toogletypes(element: string){
-            if(selectedtypes.includes(element)){
-                setSelectedtypes(selectedtypes.filter(tag => tag !== element))
-            }else{
-                setSelectedtypes([...selectedtypes, element])
-            }
-    }
-
-    async function submitLoginHandler(){
+    async function submitLoginHandler(userType: string){
         // eslint-disable-next-line prefer-const
         let result: Response;
         setIsLoading(true);
@@ -115,15 +112,14 @@ export default function Authentication(props: ModalProps) {
                 "Content-Type": "application/json",
             }),
             body: JSON.stringify({
-                username: username,
-                password: password,
+                username: userType === "guest" ? "guest" : username,
+                password: userType === "guest" ? "Guest@123" : password,
                 stayLoggedIn: selectedtypes
             })
         });
 
         console.log(result)
         const response  = await result.json();
-        console.log(response)
         if(response.success === 1){
             localStorage.setItem('Authorization', response.Authorization);
             props.setVisible(false);

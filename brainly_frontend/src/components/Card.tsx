@@ -19,36 +19,58 @@ export default function Card(props: cardProps){
     const [cardData, setCardData] = useRecoilState(cardDataAtom);
 
     return (
-        <div id={props.id} className="h-auto min-h-100 w-85 p-4 border-[#edeff0] rounded-lg shadow-sm bg-white">
-            <div className="flex justify-between">
-                <div className="flex gap-5 font-medium">
+        <div id={props.id} className="min-h-96 max-h-96 w-85 p-4 border-[#edeff0] rounded-lg shadow-sm bg-white flex flex-col justify-between">
+            <div className="flex justify-between items-center">
+                <div className="flex gap-5 font-medium items-center">
                     {props.contentTypeIcon}
-                    <h1>{props.title}</h1>
+                    <h1 className="overflow-hidden">{props.title}</h1>
                 </div>
                 <div className="flex gap-5">
                 <button onClick={() => deletePost(props.id)} className='cursor-pointer'>{props.firsticon}</button>
                 <button onClick={() => sharePost(props.id)} className='cursor-pointer'>{props.secondicon}</button>
                 </div>
             </div>
-            <div className="mt-4">         
-            {props.contentType === "Youtube" && <iframe 
-                src={props.body}
-                title="YouTube video player" 
-                style={{ border: 0 }} 
-                allow="accelerometer; 
-                autoplay; 
-                clipboard-write; 
-                encrypted-media; 
-                gyroscope; 
-                picture-in-picture; 
-                web-share" allowFullScreen 
-                className="w-auto h-auto">     
-            </iframe>}
-            {props.contentType === "Twitter" && (<blockquote className="twitter-tweet">
-                <a href={props.body}></a> 
-            </blockquote>)}
-            {props.contentType === "Link" && (props.body)}
-            {props.contentType === "Document" && (props.body)}
+            <div className="mt-4 max-h-56 h-56 overflow-y-auto">         
+                {props.contentType === "Youtube" && <iframe 
+                    src={props.body}
+                    title="YouTube video player" 
+                    style={{ border: 0 }} 
+                    allow="accelerometer; 
+                    autoplay; 
+                    clipboard-write; 
+                    encrypted-media; 
+                    gyroscope; 
+                    picture-in-picture; 
+                    web-share" allowFullScreen 
+                    className="w-auto h-auto">     
+                </iframe>}
+                {props.contentType === "Twitter" && (<blockquote className="twitter-tweet">
+                    <a href={props.body}></a> 
+                </blockquote>)}
+                {props.contentType === "Link" && 
+                    (
+                        <a 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            href={props.body} 
+                            className="text-[#7c6fd1]"
+                        >
+                            {props.body}
+                        </a>
+                    )
+                }
+                {props.contentType === "Document" && 
+                    ( 
+                        <a 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            href={props.body} 
+                            className="text-[#7c6fd1]"
+                        >
+                            {props.body}
+                        </a>
+                    )
+                }
             </div>
             <div className="flex mt-3 flex-wrap">
                 {props.tags.split(',').map((element: string, index: number) => (
@@ -56,7 +78,7 @@ export default function Card(props: cardProps){
                 ))}
             </div>
             <div className="mt-3 text-[#95959d]">
-                Added on {props.createdAt.toDateString()}
+                Added on : {props.createdAt.toString().slice(0, 10)}
             </div>
         </div>
     )

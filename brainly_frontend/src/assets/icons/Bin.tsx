@@ -5,7 +5,7 @@ interface imageSize{
 const imageStyle = {
     "sm": "w-3 h-4",
     "md": "w-5 h-5",
-    "lg": "w-8 h-8",
+    "lg": "w-6 h-6",
 };
 
 export default function BinIcon(props: imageSize){

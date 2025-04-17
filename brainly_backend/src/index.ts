@@ -159,7 +159,7 @@ app.post("/api/v1/content", userAuth ,async (req,res) => {
 
     try{
         
-        const {type, link, title, tags, userId} : {type:string, link:string, title:string, tags:string[], userId:string} = req.body;
+        const {type, link, title, tags, addedon, userId} : {type:string, link:string, title:string, tags:string[], userId:string, addedon:Date} = req.body;
 
         if(!type || !link || !title || !tags || !userId){
             res.status(411).json({
@@ -169,7 +169,7 @@ app.post("/api/v1/content", userAuth ,async (req,res) => {
             })
         }else{
             const uuid = uuidv4();
-            const [ResultSetHeader]  = await connection.execute<ResultSetHeader>(`INSERT INTO Content VALUES ('${uuid}', '${link}', '${type}', '${title}', '${tags}','${userId}')`);
+            const [ResultSetHeader]  = await connection.execute<ResultSetHeader>(`INSERT INTO Content VALUES ('${uuid}', '${link}', '${type}', '${title}', '${tags}','${userId}','${addedon}')`);
             
             if(ResultSetHeader.affectedRows > 0){
                 res.status(200).json({
@@ -427,6 +427,6 @@ app.post("/api/v1/me", userAuth ,async (req,res) => {
     }
 })
 
-app.listen(3000, () => {
+app.listen(3001, () => {
     console.log('Server is running on port 3000');
   });

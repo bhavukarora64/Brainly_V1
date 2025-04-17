@@ -80,7 +80,8 @@ export default function CreateContentModal(props: ModalProps) {
                 title: title,
                 link: link,
                 tags: tags,
-                type: selectedtypes
+                type: selectedtypes,
+                addedon: new Date().toISOString().slice(0, 10)
             })
         });
         const userData = await response.json(); 

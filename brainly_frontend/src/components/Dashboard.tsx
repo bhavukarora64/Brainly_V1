@@ -20,10 +20,10 @@ import {useUserData} from '../hooks/useUserData';
 const backendWssURL = import.meta.env.VITE_BACKEND_BASE_WSS_URL;
 const backendBaseURL = import.meta.env.VITE_BACKEND_BASE_URL;
 const iconTypes = {
-  "Twitter": <Twitter imageProp='md' />,
-  "Youtube": <Youtube imageProp='md' />,
-  "Link": <Link imageProp='md' />,
-  "Document": <Document imageProp='md' />
+  "Twitter": <Twitter imageProp='lg' />,
+  "Youtube": <Youtube imageProp='lg' />,
+  "Link": <Link imageProp='lg' />,
+  "Document": <Document imageProp='lg' />
 };
 
 const Notification: React.FC<{ link: string; onClose: () => void }> = ({ link, onClose }) => {
@@ -98,7 +98,6 @@ function Dashboard() {
     await fetchData();
 
     if (userId.current) {
-      console.log(userId.current);
           const jsonData = {
             type: "join",
             payload: { roomId: userId.current}
@@ -187,6 +186,15 @@ function Dashboard() {
     }
   }
 
+  function getCleanYouTubeURL(url: string) {
+    const urlObj = new URL(url);
+    console.log(urlObj)
+    const videoId = urlObj.searchParams.get("v");
+    console.log(videoId)
+    return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
+
+  }
+
   return (
     <div className='grid grid-cols-12'>
       <CreateContentModal visible={visible} setVisible={setVisible} fetchData={fetchData} />
@@ -220,7 +228,12 @@ function Dashboard() {
           />
           :
           cardData.length ?
-            cardData.map((card) => (
+            cardData.map((card) => {
+              
+              const clearURL = getCleanYouTubeURL(card.link);
+              console.log(clearURL)
+
+              return(
               <Card
                 // @ts-expect-error: card.contentId might be undefined
                 key={card.contentId}
@@ -229,10 +242,11 @@ function Dashboard() {
                   // @ts-expect-error: card.title might be undefined
                 title={card.title}
                   // @ts-expect-error: card.link might be undefined
-                body={card.link.replace("watch?v=", "embed/")}
+                body={clearURL || card.link}
                   // @ts-expect-error: card.tags might be undefined
                 tags={card.tags}
-                createdAt={new Date()}
+                // @ts-expect-error: card.tags might be undefined
+                createdAt={card.addedon || "0000-00-00"}
                   // @ts-expect-error: card.type might be undefined
                 contentType={card.type}
                   // @ts-expect-error: card.type might be undefined
@@ -240,7 +254,7 @@ function Dashboard() {
                 firsticon={<BinIcon imageProp="lg" />}
                 secondicon={<ShareIcon imageProp="lg" />}
               />
-            )) :
+            )}) :
             <h1 className='text-gray-400'>hmmmm....Seems like you have nothing in your mind right now !</h1>
         }
       </div>
