@@ -11,21 +11,12 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 const app = express();
 app.use(express.json());
-const allowedOriginSubstring = 'brainly-v1-frontend';
-
 app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || origin.includes(allowedOriginSubstring)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true
-}));
-
-// Allow preflight for all routes
-app.options('*', cors());
+    origin: true, // Allow all origins
+    credentials: true
+  }));
+  
+  app.options('*', cors());
 
 app.get("/", (req, res) => {
     res.send("Welcome to the Brainly's Server. Please access the endpoint for your tasks.");
