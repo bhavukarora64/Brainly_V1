@@ -231,7 +231,6 @@ function Dashboard() {
             cardData.map((card) => {
               // @ts-expect-error: Error Expected
               const clearURL = getCleanYouTubeURL(card.link, iconTypes[card.type]);
-              console.log(clearURL)
 
               return(
               <Card
