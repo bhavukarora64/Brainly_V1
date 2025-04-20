@@ -186,9 +186,7 @@ function Dashboard() {
 
   function getCleanYouTubeURL(url: string) {
     const urlObj = new URL(url);
-    console.log(urlObj)
     const videoId = urlObj.searchParams.get("v");
-    console.log(videoId)
     return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
 
   }
@@ -228,8 +226,12 @@ function Dashboard() {
           cardData.length ?
             cardData.map((card) => {
               // @ts-expect-error: Error Expected
-              const clearURL = getCleanYouTubeURL(card.link);
-              console.log(clearURL)
+              let clearURL = card.link;
+              // @ts-expect-error: Error Expected
+              if(iconTypes[card.type] === "Youtube"){
+                // @ts-expect-error: Error Expected
+                clearURL = getCleanYouTubeURL(card.link);
+              }
 
               return(
               <Card

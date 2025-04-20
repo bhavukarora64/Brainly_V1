@@ -116,7 +116,6 @@ export default function Authentication(props: ModalProps) {
             })
         });
 
-        console.log(result)
         const response  = await result.json();
         if(response.success === 1){
             localStorage.setItem('Authorization', response.Authorization);

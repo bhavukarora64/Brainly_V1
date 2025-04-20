@@ -84,8 +84,7 @@ export default function CreateContentModal(props: ModalProps) {
                 addedon: new Date().toISOString().slice(0, 10)
             })
         });
-        const userData = await response.json(); 
-        console.log(userData.message)
+        const userData = await response.json();
         setIsLoading(false);
         alert(userData.message)
         props.setVisible(false);
