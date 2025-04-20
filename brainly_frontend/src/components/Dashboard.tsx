@@ -18,7 +18,7 @@ import { cardDataAtom } from '../assets/store/atoms/cardData';
 import { sharedBrain } from '../assets/store/atoms/sharedBrain';
 import {useUserData} from '../hooks/useUserData';
 const backendWssURL = import.meta.env.VITE_BACKEND_BASE_WSS_URL;
-const backendBaseURL = import.meta.env.VITE_BACKEND_TEST_URL;
+const backendBaseURL = import.meta.env.VITE_BACKEND_BASE_URL;
 const iconTypes = {
   "Twitter": <Twitter imageProp='lg' />,
   "Youtube": <Youtube imageProp='lg' />,

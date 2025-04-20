@@ -5,7 +5,7 @@ import { Dispatch, SetStateAction, useState } from 'react';
 import { loginAtom } from "../assets/store/atoms/loggedIn";
 import { useSetRecoilState } from "recoil";
 import { useNavigate } from "react-router-dom";
-const backendBaseURL = import.meta.env.VITE_BACKEND_TEST_URL;
+const backendBaseURL = import.meta.env.VITE_BACKEND_BASE_URL;
 
 interface ModalProps {
     visible: boolean;

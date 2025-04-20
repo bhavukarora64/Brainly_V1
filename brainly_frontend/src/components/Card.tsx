@@ -13,7 +13,7 @@ interface cardProps{
 import { ReactElement } from "react";
 import { useRecoilState } from "recoil";
 import { cardDataAtom } from "../assets/store/atoms/cardData";
-const backendBaseURL = import.meta.env.VITE_BACKEND_TEST_URL;
+const backendBaseURL = import.meta.env.VITE_BACKEND_BASE_URL;
 
 export default function Card(props: cardProps){  
     const [cardData, setCardData] = useRecoilState(cardDataAtom);
