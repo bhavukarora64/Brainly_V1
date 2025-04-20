@@ -12,11 +12,19 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(cors({
-    origin: true, // Allow all origins
+    origin: (origin, callback) => {
+      callback(null, true); // Allow all origins
+    },
     credentials: true
   }));
   
-  app.options('*', cors());
+  // Preflight (OPTIONS) requests handler for all routes
+app.options('*', cors({
+origin: (origin, callback) => {
+    callback(null, true);
+},
+credentials: true
+}));
 
 app.get("/", (req, res) => {
     res.send("Welcome to the Brainly's Server. Please access the endpoint for your tasks.");
