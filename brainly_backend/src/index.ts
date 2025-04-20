@@ -12,6 +12,9 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 
+app.use(cors())
+app.options("*", cors())
+
 app.get("/", (req, res) => {
     res.send("Welcome to the Brainly's Server. Please access the endpoint for your tasks.");
 })
