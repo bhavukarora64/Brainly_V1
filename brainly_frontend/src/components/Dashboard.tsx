@@ -184,10 +184,14 @@ function Dashboard() {
       }
   }
 
-  function getCleanYouTubeURL(url: string) {
-    const urlObj = new URL(url);
-    const videoId = urlObj.searchParams.get("v");
-    return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
+  function getCleanYouTubeURL(url: string, linkType: string) {
+    if(linkType === "Youtube"){
+      const urlObj = new URL(url);
+      const videoId = urlObj.searchParams.get("v");
+      return videoId ? `https://www.youtube.com/embed/${videoId}` : null; 
+    }else{
+      return url
+    }
 
   }
 
@@ -226,12 +230,7 @@ function Dashboard() {
           cardData.length ?
             cardData.map((card) => {
               // @ts-expect-error: Error Expected
-              let clearURL = card.link;
-              // @ts-expect-error: Error Expected
-              if(iconTypes[card.type] === "Youtube"){
-                // @ts-expect-error: Error Expected
-                clearURL = getCleanYouTubeURL(card.link);
-              }
+              const clearURL = getCleanYouTubeURL(card.link, iconTypes[card.type]);
 
               return(
               <Card
@@ -242,7 +241,7 @@ function Dashboard() {
                   // @ts-expect-error: card.title might be undefined
                 title={card.title}
                   // @ts-expect-error: card.link might be undefined
-                body={clearURL || card.link}
+                body={clearURL}
                   // @ts-expect-error: card.tags might be undefined
                 tags={card.tags}
                 // @ts-expect-error: card.tags might be undefined
