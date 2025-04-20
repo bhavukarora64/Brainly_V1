@@ -152,9 +152,8 @@ function Dashboard() {
   }
 
   async function shareBrain() {
-    const loggedInUserData = true; //BackednRequest 1
-    if (loggedInUserData) {
       const token = localStorage.getItem("Authorization");
+      setIsBrainShared(prevValue => !prevValue);
       const response = await fetch(`${backendBaseURL}/api/v1/brain/share`, { //BackendRequest 2
         method: "PUT",
         headers: {
@@ -165,7 +164,9 @@ function Dashboard() {
       });
       const userData = await response.json();
 
-      setIsBrainShared(prevValue => !prevValue);
+      if(userData.error){
+        setIsBrainShared(prevValue => !prevValue);
+      }
       
       if (!isBrainShared) {
         await navigator.clipboard.writeText(userData.link);
@@ -181,9 +182,6 @@ function Dashboard() {
 
         webSocket?.send(JSON.stringify(jsonData)); //BackendRequest 3
       }
-    } else {
-      alert("You must be logged in!");
-    }
   }
 
   function getCleanYouTubeURL(url: string) {
