@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import About from "../assets/icons/About";
 import Brain from "../assets/icons/Brain";
 import List from "../assets/icons/OutlineList";
@@ -20,10 +20,13 @@ function LandingPage(){
     const wordSwap:string[] = ["Organize","Streamline", "Categorize", "Structure"];
     const [isVisible, setIsVisible] = useState(false);
     const [isAboutVisible, setIsAboutVisible] = useState(false);
+    const [isOptionVisible, setIsOptionVisible] = useState(false);
     const [loginVisible, setLoginVisible] = useState(false);
     const [loginState, setLoginState] = useRecoilState(loginAtom)
     const [activeWord, setActiveWord] = useState(wordSwap[0]);
     const backendBaseURL = import.meta.env.VITE_BACKEND_TEST_URL;
+    const aboutRef = useRef<HTMLDivElement>(null);
+    const optionRef = useRef<HTMLDivElement>(null);
     
 
     useEffect(() => {
@@ -74,15 +77,40 @@ function LandingPage(){
     }
   }
 
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if(aboutRef.current && !aboutRef.current.contains(event.target as Node)) {
+        setIsAboutVisible(false);
+      }
+    }
 
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [aboutRef])
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if(optionRef.current && !optionRef.current.contains(event.target as Node)) {
+        setIsOptionVisible(false);
+        setIsVisible(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+
+    }, [optionRef])
 
   function AboutSection(){
     return(
-      <div className="absolute left-[-110rem] w-screen h-screen flex top-[-11.5vh] justify-end  px-24 " onClick={() => (setIsAboutVisible((prevValue) => !prevValue))}>
-      <div className=" flex flex-col items-center my-16 md:my-28 lg:my-36 xl:my-42 w-120 h-125 border-1 border-gray-200 shadow-xl rounded-bl-2xl rounded-tl-2xl rounded-br-2xl z-50 bg-white" onClick={() => (setIsAboutVisible(true))}>
-        <h1 className="text-2xl font-bold m-3">Brainly v1.0 </h1>
+      <div ref={aboutRef} className="absolute right-[30%] top-[-10%] md:right-[80%] md:top-[-120%] xl:right-[90%] xl:top-[-200%] flex flex-col items-center my-16 md:my-28 lg:my-36 xl:my-42 w-100 lg:w-120 h-120 lg:h-125 border-1 border-gray-200 shadow-xl rounded-bl-2xl rounded-tl-2xl rounded-br-2xl z-50 bg-white" onClick={() => (setIsAboutVisible(true))}>
+        <h1 className="text-xl lg:text-2xl font-bold m-3">Brainly v1.0 </h1>
         <h1>Your AI-Powered Second Brain</h1>
-        <p className="font-extralight m-4"> 
+        <p className="font-extralight m-4 text-sm lg:text-base"> 
           Welcome to Brainly v1.0, your all-in-one hub for capturing and organizing your digital world. Whether it’s 
           YouTube links, PDFs, tweets, or articles, Brainly lets you upload, sort, and retrieve content effortlessly 
           — powered by smart AI and a clean, intuitive dashboard.
@@ -90,14 +118,13 @@ function LandingPage(){
           Built for thinkers, creators, and lifelong learners, Brainly helps you stay organized, focused, and never forget what matters.
         </p>
         <div className="flex flex-col justify-between items-center w-full px-16">
-        <h1 className="text-2xl font-bold m-3d">Meet Out Team</h1>
-          <img src={CEO} className="rounded-[50%] w-32 flex-1"></img>
+        <h1 className="text-xl lg:text-2xl font-bold m-3d">Meet Out Team</h1>
+          <img src={CEO} className="rounded-[50%] w-24 lg:w-32 flex-1"></img>
           <div className="flex-3 text-center">
             <p className="text-lg">Bhavuk Arora</p>
             <p className="text-xs text-gray-500">CEO & Co-Founder</p>
           </div>
         </div>
-      </div>
       </div>
     )
   }
@@ -106,16 +133,17 @@ function LandingPage(){
         <>
         <Authentication visible={loginVisible} setVisible={setLoginVisible} />
         <nav className="fixed w-full flex justify-between py-5 top-0 scroll-smooth z-40 bg-white scroll-m-10">
-            <button className="ml-4 relative inline-flex text-center rounded-2xl" onClick={() => setIsVisible(prev => !prev)}>
+            <button className="ml-4 relative inline-flex text-center rounded-2xl" onClick={() => {setIsVisible(prev => !prev) 
+              setIsOptionVisible(true)}}>
                 {isVisible ? <SolidList imageProp="xl" /> : <List imageProp="xl" />}
-                <div className={`transition-all duration-500 flex flex-col rounded-bl-lg rounded-br-lg rounded-tr-lg border-2 border-gray-200 absolute left-10 top-8 mt-2 bg-white shadow-lg ${isVisible ? 'flex scale-100' : 'hidden scale-95'}`}>
+                {isOptionVisible && <div ref={optionRef} className={`transition-all duration-500 flex flex-col rounded-bl-lg rounded-br-lg rounded-tr-lg border-2 border-gray-200 absolute left-10 top-8 mt-2 bg-white shadow-lg ${isVisible ? 'flex scale-100' : 'hidden scale-95'}`}>
                   <a href="#herosection"> <button className="px-6 py-2 w-72 text-2xl hover:bg-gray-300">Getting Started</button></a>
                   <Link to="/dashboard"><button className="px-4 py-2 w-72 text-2xl hover:bg-gray-300">Dashboard</button></Link>
                    <a href="#whybrainly" className="scroll-smooth"><button className="px-4 py-2 w-72 text-2xl hover:bg-gray-300">Why Brainly ?</button></a>
                    <a href="#featuresection" className="scroll-smooth"><button className="px-4 py-2 w-72 text-2xl hover:bg-gray-300">Features</button></a>
                    <a href="#subscriptionsection" className="scroll-smooth"><button className="px-4 py-2 w-72 text-2xl hover:bg-gray-300">Subscription</button></a>
                    <a href="#emailsection"><button className="px-4 py-2 w-72 text-2xl hover:bg-gray-300">Contact Us</button></a>
-                </div>
+                </div>}
             </button>
             <div className="flex">
                 <div><Brain imageProp="xl" /></div>
