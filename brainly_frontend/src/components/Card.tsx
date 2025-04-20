@@ -31,19 +31,16 @@ export default function Card(props: cardProps){
                 </div>
             </div>
             <div className="mt-4 max-h-56 h-56 overflow-y-auto">         
-                {props.contentType === "Youtube" && <iframe 
-                    src={props.body}
+            {props.contentType === "Youtube" && (
+                <iframe 
+                    src={props.body.replace("watch?v=", "embed/")}
                     title="YouTube video player" 
                     style={{ border: 0 }} 
-                    allow="accelerometer; 
-                    autoplay; 
-                    clipboard-write; 
-                    encrypted-media; 
-                    gyroscope; 
-                    picture-in-picture; 
-                    web-share" allowFullScreen 
-                    className="w-auto h-auto">     
-                </iframe>}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen 
+                    className="w-full h-full"
+                ></iframe>
+            )}
                 {props.contentType === "Twitter" && (<blockquote className="twitter-tweet">
                     <a href={props.body}></a> 
                 </blockquote>)}
