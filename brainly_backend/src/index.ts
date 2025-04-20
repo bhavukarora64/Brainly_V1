@@ -12,31 +12,6 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 
-const allowedOrigins = [/brainly-v1-frontend/]; // Regex for any frontend with "brainly-v1-frontend"
-
-app.use(cors({
-
-  origin: (origin, callback) => {
-    if (!origin) return callback(null, true); // Allow server-to-server or curl/Postman
-    if (allowedOrigins.some(pattern => pattern.test(origin))) {
-      return callback(null, true);
-    }
-    return callback(new Error('Not allowed by CORS'));
-  },
-  credentials: true
-}));
-
-app.options('*', cors({
-  origin: (origin, callback) => {
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.some(pattern => pattern.test(origin))) {
-      return callback(null, true);
-    }
-    return callback(new Error('Not allowed by CORS'));
-  },
-  credentials: true
-}));
-
 app.get("/", (req, res) => {
     res.send("Welcome to the Brainly's Server. Please access the endpoint for your tasks.");
 })
