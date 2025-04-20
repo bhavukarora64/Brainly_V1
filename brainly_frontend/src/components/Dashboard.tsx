@@ -152,10 +152,10 @@ function Dashboard() {
   }
 
   async function shareBrain() {
-    const loggedInUserData = await userCheck();
+    const loggedInUserData = true; //BackednRequest 1
     if (loggedInUserData) {
       const token = localStorage.getItem("Authorization");
-      const response = await fetch(`${backendBaseURL}/api/v1/brain/share`, {
+      const response = await fetch(`${backendBaseURL}/api/v1/brain/share`, { //BackendRequest 2
         method: "PUT",
         headers: {
           "authorization": token || '',
@@ -179,7 +179,7 @@ function Dashboard() {
 
         console.log("connecting")
 
-        webSocket?.send(JSON.stringify(jsonData));
+        webSocket?.send(JSON.stringify(jsonData)); //BackendRequest 3
       }
     } else {
       alert("You must be logged in!");
