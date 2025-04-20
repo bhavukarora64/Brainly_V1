@@ -1,5 +1,5 @@
 // hooks/useUserData.ts
-const backendBaseURL = import.meta.env.VITE_BACKEND_BASE_URL;
+const backendBaseURL = import.meta.env.VITE_BACKEND_TEST_URL;
 
 export const useUserData = () => {
   const userCheck = async () => {

@@ -15,7 +15,7 @@ import Authentication from './Authentication'
 import CreateContentModal from './CreateContentModal'
 import ShowAll from '../assets/icons/showAll'
 const backendWssURL = import.meta.env.VITE_BACKEND_BASE_WSS_URL;
-const backendBaseURL = import.meta.env.VITE_BACKEND_BASE_URL;
+const backendBaseURL = import.meta.env.VITE_BACKEND_TEST_URL;
 
 const iconTypes = {
   "Twitter": <Twitter imageProp='md' />,

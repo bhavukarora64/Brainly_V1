@@ -23,7 +23,7 @@ function LandingPage(){
     const [loginVisible, setLoginVisible] = useState(false);
     const [loginState, setLoginState] = useRecoilState(loginAtom)
     const [activeWord, setActiveWord] = useState(wordSwap[0]);
-    const backendBaseURL = import.meta.env.VITE_BACKEND_BASE_URL;
+    const backendBaseURL = import.meta.env.VITE_BACKEND_TEST_URL;
     
 
     useEffect(() => {

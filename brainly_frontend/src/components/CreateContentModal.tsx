@@ -2,7 +2,7 @@ import Close from "../assets/icons/Close";
 import Button from "./Button";
 import Input from "./Input";
 import { Dispatch, SetStateAction, useState } from 'react';
-const backendBaseURL = import.meta.env.VITE_BACKEND_BASE_URL;
+const backendBaseURL = import.meta.env.VITE_BACKEND_TEST_URL;
 
 interface ModalProps {
     visible: boolean;
