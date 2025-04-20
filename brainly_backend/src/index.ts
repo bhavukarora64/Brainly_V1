@@ -11,7 +11,20 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 const app = express();
 app.use(express.json());
-app.use(cors());
+const allowedOriginSubstring = 'brainly-v1-frontend';
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || origin.includes(allowedOriginSubstring)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
+
+// Allow preflight for all routes
 app.options('*', cors());
 
 app.get("/", (req, res) => {
